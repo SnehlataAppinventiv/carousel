@@ -1,0 +1,348 @@
+{
+    "auth": {
+      "forgotPassword": {
+        "title": "Forgot Password",
+        "description": "Enter your email to receive a password reset link.",
+        "emailLabel": "Email",
+        "submitButton": "Send Reset Link",
+        "sending": "Sending...",
+        "linkSent": "Reset link has been sent to your email.",
+        "resendPrompt": "Didn't receive it?",
+        "resendButton": "Resend Link",
+        "backToLogin": "Back to Login"
+      },
+      "resetPassword": {
+        "title": "Reset Your Password",
+        "description": "Set a new password to access your account.",
+        "newPasswordLabel": "New Password",
+        "confirmPasswordLabel": "Confirm Password",
+        "submitButton": "Reset Password",
+        "successMessage": "Password has been reset successfully.",
+        "errorMessage": "Failed to reset password."
+      },
+      "login": {
+        "title": "Login",
+        "emailLabel": "Email",
+        "passwordLabel": "Password",
+        "submitButton": "Login",
+        "forgotPasswordLink": "Forgot Password?",
+        "invalidCredentials": "Invalid email or password."
+      },
+      "otp": {
+        "title": "Verify OTP",
+        "description": "Enter the 6-digit code sent to your device.",
+        "submitButton": "Verify",
+        "resendButton": "Resend OTP",
+        "invalidOtp": "Invalid OTP code."
+      }
+    },
+    "dashboard": {
+      "welcome": "Welcome to your dashboard!",
+      "profile": {
+        "title": "Your Profile",
+        "editButton": "Edit Profile",
+        "saveButton": "Save Changes"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "empty": "You have no notifications."
+      },
+      "pageTitle": "Dashboard",
+      "exportButton": "Export to CSV",
+      "sections": {
+        "totalUsers": "Total Users",
+        "activeUsers": "Active Users",
+        "newsletterSubscription": "Newsletter Subscription",
+        "services": "Services",
+        "products": "Products",
+        "orders": "Orders"
+      },
+      "stats": {
+        "totalSubscribed": "Total Subscribed",
+        "totalUnsubscribed": "Total Unsubscribed",
+        "mostSubscribedCategories": "Most Subscribed Categories",
+        "leastSubscribedCategories": "Least Subscribed Categories",
+        "totalServices": "Total Services",
+        "activeServices": "Active Services",
+        "pendingApproval": "Pending Approval",
+        "totalProducts": "Total Products",
+        "activeProducts": "Active Products",
+        "outOfStock": "Out of Stock",
+        "totalOrders": "Total Orders",
+        "pendingOrders": "Pending Orders",
+        "completedOrders": "Completed Orders"
+      },
+      "location": {
+        "selectLocation": "Select Location",
+        "noida": "Noida",
+        "delhi": "Delhi",
+        "gurgaon": "Gurgaon"
+      }
+    },
+    "profile": {
+      "title": "My Profile",
+      "subtitle": "View and update your profile information",
+      "editProfile": "Edit Profile",
+      "changePassword": {
+        "title": "Change Password",
+        "currentPasswordLabel": "Current Password",
+        "newPasswordLabel": "New Password",
+        "confirmPasswordLabel": "Confirm New Password",
+        "submitButton": "Change Password",
+        "successMessage": "Password changed successfully!",
+        "validation": {
+          "allFieldsRequired": "All fields are required",
+          "passwordsDoNotMatch": "New passwords do not match",
+          "passwordTooShort": "Password must be at least 8 characters",
+          "passwordRequirements": "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+        },
+        "errorMessage": "Failed to change password. Please try again."
+      },
+      "logoutButton": "Logout",
+      "lastLogin": "Last Login",
+      "reset": "Reset",
+      "fields": {
+        "adminId": "Admin ID",
+        "name": "Name",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "lastLogin": "Last Login",
+        "zone": "Zone",
+        "role": "Role & Access",
+        "status": "Status",
+        "authStatus": "Authentication Status",
+        "createdOn": "Created On"
+      },
+      "statusText": {
+        "activated": "Activated",
+        "deactivated": "Deactivated"
+      },
+      "authStatusText": {
+        "configured": "Configured",
+        "notConfigured": "Not Configured"
+      },
+      "successMessages": {
+        "profileUpdated": "Profile updated successfully.",
+        "passwordChanged": "Password changed successfully."
+      },
+      "errorMessages": {
+        "updateFailed": "Failed to update profile. Please try again.",
+        "passwordChangeFailed": "Failed to change password. Please try again."
+      },
+      "edit": {
+        "title": "Edit Profile",
+        "subtitle": "Update your personal information and contact details",
+        "personalInfo": "Personal Information",
+        "profilePicture": "Profile Picture",
+        "uploadButton": "Upload New Picture",
+        "imageHelp": "JPG, GIF or PNG. Max size of 800K",
+        "nameLabel": "Full Name",
+        "namePlaceholder": "Enter your full name",
+        "emailLabel": "Email Address",
+        "emailPlaceholder": "Enter your email address",
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "Enter your phone number",
+        "phoneHelp": "Enter a 10-digit phone number",
+        "saveButton": "Save Changes",
+        "cancelButton": "Cancel",
+        "savingButton": "Saving..."
+      }
+    },
+    "roles": {
+      "common": {
+        "title": "Roles Management",
+        "addButton": "Add Role",
+        "searchPlaceholder": "Search by Role Name",
+        "cancel": "Cancel",
+        "submit": "Submit",
+        "update": "Update",
+        "submitting": "Submitting...",
+        "validation": {
+          "nameRequired": "Role name must be at least 3 characters long",
+          "descriptionRequired": "Description is required",
+          "descriptionLength": "Description must be at least 3 characters long"
+        },
+        "errorMessages": {
+          "createFailed": "Failed to create role. Please try again.",
+          "updateFailed": "Failed to update role. Please try again.",
+          "loadFailed": "Failed to load role data. Please try again."
+        }
+      },
+      "form": {
+        "roleDetailsTitle": "Role Details",
+        "nameLabel": "Role Name",
+        "namePlaceholder": "Admin, Manager, etc.",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Description",
+        "permissionsTitle": "Permissions",
+        "selectPermission": "Select Permission",
+        "selectAll": "Select All",
+        "actionsRequiringView": ["EDIT", "STATUS", "DELETE"]
+      },
+      "table": {
+        "columns": {
+          "name": "Role Name",
+          "description": "Description",
+          "createdOn": "Created On",
+          "status": "Status",
+          "action": "Action"
+        },
+        "actions": {
+          "edit": "Edit",
+          "delete": "Delete"
+        }
+      }
+    },
+    "subAdmin": {
+      "common": {
+        "title": "Sub Admin Management",
+        "addButton": "+ Add Sub Admin",
+        "searchPlaceholder": "Search by Sub Admin ID, Name, Email Address",
+        "cancel": "Cancel",
+        "submit": "Submit",
+        "update": "Update",
+        "submitting": "Submitting...",
+        "formTitle": {
+          "add": "Add Sub Admin",
+          "edit": "Edit Sub Admin"
+        },
+        "validation": {
+          "nameRequired": "Name is required",
+          "emailRequired": "Email is required",
+          "emailInvalid": "Please enter a valid email address",
+          "phoneInvalid": "Phone number must be 10 digits",
+          "roleRequired": "Role is required"
+        },
+        "errorMessages": {
+          "createFailed": "Failed to create sub-admin. Please try again.",
+          "updateFailed": "Failed to update sub-admin. Please try again.",
+          "loadFailed": "Failed to load sub-admin data. Please try again."
+        }
+      },
+      "form": {
+        "nameLabel": "Name",
+        "emailLabel": "Email",
+        "phoneLabel": "Phone Number",
+        "phoneHelp": "10-digit mobile number without country code",
+        "roleLabel": "Role",
+        "rolePlaceholder": "Select role",
+        "roles": {
+          "admin": "Admin",
+          "editor": "Editor",
+          "viewer": "Viewer",
+          "support": "Support"
+        },
+        "addDescription": "Create a new sub admin account with specific role and permissions.",
+        "editDescription": "Update the sub admin account details and permissions."
+      },
+      "table": {
+        "columns": {
+          "id": "Sub Admin ID",
+          "name": "Name",
+          "email": "Email Address",
+          "role": "Role & Access",
+          "createdOn": "Created On",
+          "status": "Status",
+          "action": "Action"
+        },
+        "actions": {
+          "edit": "Edit",
+          "deactivate": "Deactivate",
+          "activate": "Activate",
+          "delete": "Delete"
+        }
+      },
+      "details": {
+        "title": "Sub Admin Details",
+        "breadcrumb": {
+          "management": "Sub Admin Management",
+          "details": "Sub Admin Details"
+        },
+        "actions": {
+          "deactivate": "Deactivate",
+          "edit": "Edit",
+          "reset": "Reset"
+        },
+        "fields": {
+          "adminId": "Admin ID",
+          "name": "Name",
+          "email": "Email Address",
+          "phone": "Phone Number",
+          "lastLogin": "Last Login",
+          "zone": "Zone",
+          "role": "Role & Access",
+          "status": "Status",
+          "authStatus": "Authentication Status",
+          "createdBy": "Created By",
+          "createdOn": "Created On",
+          "deactivatedBy": "Deactivated By",
+          "deactivatedOn": "Deactivated On",
+          "reason": "Reason",
+          "description": "Description"
+        },
+        "noData": "Not Available",
+        "statusText": {
+          "activated": "Activated",
+          "deactivated": "Deactivated"
+        },
+        "authStatusText": {
+          "configured": "Configured",
+          "notConfigured": "Not Configured"
+        },
+        "goBack": " ← Back to Sub Admin Management",
+        "noDataWithId": "Sub admin with ID {id} not found"
+      },
+      "add": {
+        "title": "Add Sub Admin",
+        "description": "Create a new sub admin account with specific role and permissions.",
+        "formTitle": "Sub Admin Details",
+        "nameLabel": "Name",
+        "emailLabel": "Email",
+        "phoneLabel": "Phone Number",
+        "roleLabel": "Role"
+      }
+    },
+    "error": {
+      "page": {
+        "defaultTitle": "Oops! Something went wrong",
+        "defaultDescription": "We apologize for the inconvenience. Our team has been notified of this issue.",
+        "tryAgainButton": "Try Again",
+        "goBackButton": "Go Back",
+        "technicalDetails": "Technical Details"
+      }
+    },
+    "common": {
+      "ui": {
+        "loading": "Loading...",
+        "noData": "No data available",
+        "buttons": {
+          "submit": "Submit",
+          "cancel": "Cancel",
+          "save": "Save",
+          "delete": "Delete",
+          "edit": "Edit",
+          "back": "Back",
+          "next": "Next",
+          "close": "Close",
+          "activate": "Activate",
+          "deactivate": "Deactivate"
+        },
+        "carousel": {
+          "prevSlide": "Previous slide",
+          "nextSlide": "Next slide",
+          "slideLabel": "Slide"
+        }
+      },
+      "sidebar": {
+        "dashboard": "Dashboard",
+        "rolesAccess": "Role & Access Management",
+        "subAdmin": "Sub Admin Management"
+      },
+      "notFound": {
+        "title": "Page Not Found",
+        "description": "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.",
+        "backToHome": "Back to Homepage"
+      }
+    }
+  }
+  

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface ImageWithLoaderProps {
   src: string;
@@ -13,8 +13,16 @@ export default function ImageWithLoader({
   alt,
   className = "",
 }: ImageWithLoaderProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [imageSrc, setImageSrc] = useState("");
+
+  // Set up image loading when the component mounts or src changes
+  useEffect(() => {
+    setIsLoading(true);
+    setError(false);
+    setImageSrc(src);
+  }, [src]);
 
   const handleLoad = () => {
     setIsLoading(false);
@@ -39,7 +47,7 @@ export default function ImageWithLoader({
         </div>
       ) : (
         <img
-          src={src}
+          src={imageSrc}
           alt={alt}
           className={`${className} ${
             isLoading

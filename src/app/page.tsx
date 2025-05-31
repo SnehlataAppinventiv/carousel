@@ -8,9 +8,9 @@ export default function HomePage() {
     {
       title: "Program Cards Carousel",
       description:
-        "A carousel displaying TV program cards, similar to the screenshot example.",
+        "A carousel displaying TV program cards, similar to the screenshot example. Includes a circular carousel example that demonstrates smooth wrapping at the end.",
       path: "/carousel/example",
-      tags: ["Images", "Cards", "Grid"],
+      tags: ["Images", "Cards", "Grid", "Circular"],
     },
     {
       title: "Mixed Content Carousel",
@@ -25,6 +25,13 @@ export default function HomePage() {
         "Shows how to combine multiple components within a single slide for rich layouts.",
       path: "/carousel/multi-component",
       tags: ["Layouts", "Mixed", "Complex"],
+    },
+    {
+      title: "Touch Support Test",
+      description:
+        "Test and visualize the carousel's touch event handling for mobile devices.",
+      path: "/carousel/touch-test",
+      tags: ["Touch", "Mobile", "Testing"],
     },
     {
       title: "Basic Carousel",

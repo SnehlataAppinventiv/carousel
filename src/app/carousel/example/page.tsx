@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Carousel from "@/components/Carousel";
 import ImageWithLoader from "@/components/Carousel/ImageWithLoader";
+import CircularCarouselExample from "./circular-carousel";
 
 // Define program type
 interface Program {
@@ -73,26 +74,46 @@ const programs: Program[] = [
   },
 ];
 
-// Create program card groups (4 cards per slide)
+// Create balanced program card groups (ensure all slides have the same number of cards)
 const createProgramGroups = (
   programsArray: Program[],
   cardsPerGroup = 3
 ): Program[][] => {
   const groups: Program[][] = [];
-  for (let i = 0; i < programsArray.length; i += cardsPerGroup) {
-    groups.push(programsArray.slice(i, i + cardsPerGroup));
+
+  // Calculate total number of slides needed
+  const totalSlides = Math.ceil(programsArray.length / cardsPerGroup);
+
+  for (let i = 0; i < totalSlides; i++) {
+    // For each slide, take the next cardsPerGroup items
+    const startIdx = i * cardsPerGroup;
+    const endIdx = startIdx + cardsPerGroup;
+
+    // For the last slide, if we don't have enough cards, wrap around to the beginning
+    let slideCards = programsArray.slice(startIdx, endIdx);
+
+    // If this is the last slide and we don't have enough cards, borrow from the beginning
+    if (i === totalSlides - 1 && slideCards.length < cardsPerGroup) {
+      const remaining = cardsPerGroup - slideCards.length;
+      const borrowedCards = programsArray.slice(0, remaining);
+      slideCards = [...slideCards, ...borrowedCards];
+    }
+
+    groups.push(slideCards);
   }
+
   return groups;
 };
 
 export default function ProgramsCarouselExample() {
   const [activeSlide, setActiveSlide] = useState(0);
   const programGroups = createProgramGroups(programs);
+
   // Create slides for each group of programs
   const programSlides = programGroups.map((group, groupIndex) => (
     <div
       key={groupIndex}
-      className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-${programGroups.length} gap-4 w-full`}
+      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 w-full"
     >
       {group.map((program) => (
         <div key={program.id} className="p-2">
@@ -126,7 +147,7 @@ export default function ProgramsCarouselExample() {
   return (
     <div className="bg-white py-12">
       <div className="container mx-auto px-4">
-        <div className="mb-10">
+        <div className="mb-16">
           <h1 className="text-5xl font-bold uppercase mb-8">PROGRAMAS</h1>
 
           {/* Filter buttons */}
@@ -151,14 +172,25 @@ export default function ProgramsCarouselExample() {
               className="h-auto"
             />
           </div>
+
+          <div className="mt-4">
+            <p className="text-sm text-gray-600">
+              This carousel wraps cards from the beginning when the last slide
+              doesn't have enough cards to fill a complete row, ensuring
+              consistent layout across all slides.
+            </p>
+          </div>
+
+          <div className="flex justify-start mt-4">
+            <button className="text-sm text-gray-600 flex items-center gap-1">
+              Más programas
+              <span>→</span>
+            </button>
+          </div>
         </div>
 
-        <div className="flex justify-start">
-          <button className="text-sm text-gray-600 flex items-center gap-1">
-            Más programas
-            <span>→</span>
-          </button>
-        </div>
+        {/* Include the circular carousel example */}
+        <CircularCarouselExample />
       </div>
     </div>
   );

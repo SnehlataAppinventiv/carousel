@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import ChevronLeftIcon from './ChevronLeftIcon';
-import ChevronRightIcon from './ChevronRightIcon';
-import CarouselDots from './CarouselDots';
-import texts from '@/messages/en.json';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import ChevronLeftIcon from "./ChevronLeftIcon";
+import ChevronRightIcon from "./ChevronRightIcon";
+import CarouselDots from "./CarouselDots";
+import texts from "@/messages/en.json";
 
 interface CarouselProps {
   /** Array of items to display in the carousel */
@@ -26,13 +26,22 @@ export default function Carousel({
   autoPlayInterval = 0,
   showArrows = true,
   showDots = true,
-  className = '',
+  className = "",
   onSlideChange,
 }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
   const initialRenderRef = useRef(true);
+  const slidesContainerRef = useRef<HTMLDivElement>(null);
+
+  // For touch events
+  const touchStartXRef = useRef<number | null>(null);
+  const touchEndXRef = useRef<number | null>(null);
+  const [isTouching, setIsTouching] = useState(false);
+  const [touchOffset, setTouchOffset] = useState(0);
+  const [isSwipeEnabled, setIsSwipeEnabled] = useState(true);
+
   const t = texts.common.ui.carousel;
 
   // Clear any running interval when component unmounts
@@ -59,7 +68,7 @@ export default function Carousel({
       }
 
       autoPlayRef.current = setInterval(() => {
-        setCurrentIndex(prevIndex => {
+        setCurrentIndex((prevIndex) => {
           const newIndex = (prevIndex + 1) % items.length;
           if (onSlideChange) {
             // Use a timeout to ensure this happens after render cycle
@@ -83,7 +92,7 @@ export default function Carousel({
     if (isTransitioning || items.length <= 1) return;
 
     setIsTransitioning(true);
-    setCurrentIndex(prevIndex => {
+    setCurrentIndex((prevIndex) => {
       const newIndex = prevIndex === 0 ? items.length - 1 : prevIndex - 1;
       if (onSlideChange) {
         // Use a timeout to ensure this happens after render cycle
@@ -100,7 +109,7 @@ export default function Carousel({
     if (isTransitioning || items.length <= 1) return;
 
     setIsTransitioning(true);
-    setCurrentIndex(prevIndex => {
+    setCurrentIndex((prevIndex) => {
       const newIndex = (prevIndex + 1) % items.length;
       if (onSlideChange) {
         // Use a timeout to ensure this happens after render cycle
@@ -115,7 +124,8 @@ export default function Carousel({
 
   const goToSlide = useCallback(
     (index: number) => {
-      if (isTransitioning || index === currentIndex || items.length <= 1) return;
+      if (isTransitioning || index === currentIndex || items.length <= 1)
+        return;
 
       setIsTransitioning(true);
       setCurrentIndex(index);
@@ -134,18 +144,107 @@ export default function Carousel({
   // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') {
+      if (e.key === "ArrowLeft") {
         goToPrevious();
-      } else if (e.key === 'ArrowRight') {
+      } else if (e.key === "ArrowRight") {
         goToNext();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, [goToNext, goToPrevious]);
+
+  // Touch event handlers for swipe functionality
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isSwipeEnabled || items.length <= 1) return;
+
+      touchStartXRef.current = e.touches[0].clientX;
+      touchEndXRef.current = e.touches[0].clientX;
+      setIsTouching(true);
+      setTouchOffset(0);
+
+      // Pause autoplay during touch
+      if (autoPlayRef.current) {
+        clearInterval(autoPlayRef.current);
+        autoPlayRef.current = null;
+      }
+    },
+    [isSwipeEnabled, items.length]
+  );
+
+  const handleTouchMove = useCallback(
+    (e: React.TouchEvent) => {
+      if (!isTouching || !touchStartXRef.current || !isSwipeEnabled) return;
+
+      touchEndXRef.current = e.touches[0].clientX;
+      const diff = touchStartXRef.current - touchEndXRef.current;
+
+      // Calculate the percentage of the container width for smooth movement
+      if (slidesContainerRef.current) {
+        const containerWidth = slidesContainerRef.current.offsetWidth;
+        const offsetPercentage = (diff / containerWidth) * 100;
+        setTouchOffset(offsetPercentage);
+      }
+    },
+    [isTouching, isSwipeEnabled]
+  );
+
+  const handleTouchEnd = useCallback(() => {
+    if (
+      !isTouching ||
+      !touchStartXRef.current ||
+      !touchEndXRef.current ||
+      !isSwipeEnabled
+    ) {
+      setIsTouching(false);
+      setTouchOffset(0);
+      return;
+    }
+
+    const diff = touchStartXRef.current - touchEndXRef.current;
+
+    // Threshold for swipe (pixels)
+    const threshold = 50;
+
+    if (diff > threshold) {
+      // Swipe left, go to next slide
+      goToNext();
+    } else if (diff < -threshold) {
+      // Swipe right, go to previous slide
+      goToPrevious();
+    }
+
+    // Reset touch state
+    touchStartXRef.current = null;
+    touchEndXRef.current = null;
+    setIsTouching(false);
+    setTouchOffset(0);
+
+    // Resume autoplay if needed
+    if (autoPlayInterval > 0 && items.length > 1 && !autoPlayRef.current) {
+      autoPlayRef.current = setInterval(() => {
+        setCurrentIndex((prevIndex) => {
+          const newIndex = (prevIndex + 1) % items.length;
+          if (onSlideChange) {
+            setTimeout(() => onSlideChange(newIndex), 0);
+          }
+          return newIndex;
+        });
+      }, autoPlayInterval);
+    }
+  }, [
+    isTouching,
+    isSwipeEnabled,
+    goToNext,
+    goToPrevious,
+    autoPlayInterval,
+    items.length,
+    onSlideChange,
+  ]);
 
   // If there are no items or only one item, render simplified view
   if (items.length === 0) {
@@ -171,8 +270,18 @@ export default function Carousel({
       <div className="relative w-full h-full" aria-live="polite">
         {/* Slides container */}
         <div
-          className="flex transition-transform duration-300 ease-in-out h-full"
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+          ref={slidesContainerRef}
+          className={`flex ${
+            isTouching ? "" : "transition-transform duration-300 ease-in-out"
+          } h-full`}
+          style={{
+            transform: isTouching
+              ? `translateX(-${currentIndex * 100 + touchOffset}%)`
+              : `translateX(-${currentIndex * 100}%)`,
+          }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
           {items.map((item, index) => (
             <div
@@ -215,8 +324,19 @@ export default function Carousel({
 
       {/* Pagination dots */}
       {showDots && items.length > 1 && (
-        <CarouselDots itemCount={items.length} activeIndex={currentIndex} onDotClick={goToSlide} />
+        <CarouselDots
+          itemCount={items.length}
+          activeIndex={currentIndex}
+          onDotClick={goToSlide}
+        />
       )}
+
+      {/* Touch indicator */}
+      <div className="hidden absolute bottom-0 left-0 bg-blue-500 text-white text-xs px-2 py-1 z-50">
+        Touch enabled: {isSwipeEnabled ? "Yes" : "No"} | Status:{" "}
+        {isTouching ? "Touching" : "Not touching"} | Offset:{" "}
+        {touchOffset.toFixed(2)}%
+      </div>
     </div>
   );
 }

@@ -19,6 +19,14 @@ interface CarouselProps {
   className?: string;
   /** Callback function triggered when slide changes */
   onSlideChange?: (index: number) => void;
+  /** Number of items to show at once in the viewport */
+  itemsPerView?: number;
+  /** Number of items to scroll by when navigating */
+  itemsToScroll?: number;
+  /** Gap between items in pixels */
+  itemGap?: number;
+  /** Whether to use multi-item view mode (shows multiple items) */
+  multiView?: boolean;
 }
 
 export default function Carousel({
@@ -28,6 +36,10 @@ export default function Carousel({
   showDots = true,
   className = "",
   onSlideChange,
+  itemsPerView = 1,
+  itemsToScroll = 1,
+  itemGap = 16,
+  multiView = false,
 }: CarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -43,6 +55,11 @@ export default function Carousel({
   const [isSwipeEnabled, setIsSwipeEnabled] = useState(true);
 
   const t = texts.common.ui.carousel;
+
+  // Calculate the maximum slide index
+  const maxIndex = multiView
+    ? Math.max(0, items.length - itemsPerView)
+    : items.length - 1;
 
   // Clear any running interval when component unmounts
   useEffect(() => {
@@ -69,7 +86,9 @@ export default function Carousel({
 
       autoPlayRef.current = setInterval(() => {
         setCurrentIndex((prevIndex) => {
-          const newIndex = (prevIndex + 1) % items.length;
+          // Don't go beyond the max index
+          const newIndex =
+            prevIndex >= maxIndex ? maxIndex : prevIndex + itemsToScroll;
           if (onSlideChange) {
             // Use a timeout to ensure this happens after render cycle
             setTimeout(() => onSlideChange(newIndex), 0);
@@ -85,15 +104,15 @@ export default function Carousel({
         }
       };
     }
-  }, [autoPlayInterval, items.length, onSlideChange]);
+  }, [autoPlayInterval, items.length, onSlideChange, maxIndex, itemsToScroll]);
 
   // Navigation functions
   const goToPrevious = useCallback(() => {
-    if (isTransitioning || items.length <= 1) return;
+    if (isTransitioning || items.length <= 1 || currentIndex === 0) return;
 
     setIsTransitioning(true);
     setCurrentIndex((prevIndex) => {
-      const newIndex = prevIndex === 0 ? items.length - 1 : prevIndex - 1;
+      const newIndex = Math.max(0, prevIndex - itemsToScroll);
       if (onSlideChange) {
         // Use a timeout to ensure this happens after render cycle
         setTimeout(() => onSlideChange(newIndex), 0);
@@ -103,14 +122,21 @@ export default function Carousel({
 
     // Reset transition state after animation completes
     setTimeout(() => setIsTransitioning(false), 300);
-  }, [isTransitioning, items.length, onSlideChange]);
+  }, [
+    isTransitioning,
+    items.length,
+    onSlideChange,
+    currentIndex,
+    itemsToScroll,
+  ]);
 
   const goToNext = useCallback(() => {
-    if (isTransitioning || items.length <= 1) return;
+    if (isTransitioning || items.length <= 1 || currentIndex >= maxIndex)
+      return;
 
     setIsTransitioning(true);
     setCurrentIndex((prevIndex) => {
-      const newIndex = (prevIndex + 1) % items.length;
+      const newIndex = Math.min(maxIndex, prevIndex + itemsToScroll);
       if (onSlideChange) {
         // Use a timeout to ensure this happens after render cycle
         setTimeout(() => onSlideChange(newIndex), 0);
@@ -120,25 +146,35 @@ export default function Carousel({
 
     // Reset transition state after animation completes
     setTimeout(() => setIsTransitioning(false), 300);
-  }, [isTransitioning, items.length, onSlideChange]);
+  }, [
+    isTransitioning,
+    items.length,
+    onSlideChange,
+    currentIndex,
+    maxIndex,
+    itemsToScroll,
+  ]);
 
   const goToSlide = useCallback(
     (index: number) => {
       if (isTransitioning || index === currentIndex || items.length <= 1)
         return;
 
+      // Ensure we don't go beyond max index
+      const targetIndex = Math.min(maxIndex, Math.max(0, index));
+
       setIsTransitioning(true);
-      setCurrentIndex(index);
+      setCurrentIndex(targetIndex);
 
       // Use a timeout to ensure this happens after render cycle
       if (onSlideChange) {
-        setTimeout(() => onSlideChange(index), 0);
+        setTimeout(() => onSlideChange(targetIndex), 0);
       }
 
       // Reset transition state after animation completes
       setTimeout(() => setIsTransitioning(false), 300);
     },
-    [currentIndex, isTransitioning, items.length, onSlideChange]
+    [currentIndex, isTransitioning, items.length, onSlideChange, maxIndex]
   );
 
   // Handle keyboard navigation
@@ -210,10 +246,10 @@ export default function Carousel({
     // Threshold for swipe (pixels)
     const threshold = 50;
 
-    if (diff > threshold) {
+    if (diff > threshold && currentIndex < maxIndex) {
       // Swipe left, go to next slide
       goToNext();
-    } else if (diff < -threshold) {
+    } else if (diff < -threshold && currentIndex > 0) {
       // Swipe right, go to previous slide
       goToPrevious();
     }
@@ -228,7 +264,8 @@ export default function Carousel({
     if (autoPlayInterval > 0 && items.length > 1 && !autoPlayRef.current) {
       autoPlayRef.current = setInterval(() => {
         setCurrentIndex((prevIndex) => {
-          const newIndex = (prevIndex + 1) % items.length;
+          const newIndex =
+            prevIndex >= maxIndex ? maxIndex : prevIndex + itemsToScroll;
           if (onSlideChange) {
             setTimeout(() => onSlideChange(newIndex), 0);
           }
@@ -244,6 +281,9 @@ export default function Carousel({
     autoPlayInterval,
     items.length,
     onSlideChange,
+    currentIndex,
+    maxIndex,
+    itemsToScroll,
   ]);
 
   // If there are no items or only one item, render simplified view
@@ -251,10 +291,28 @@ export default function Carousel({
     return null;
   }
 
-  if (items.length === 1) {
+  if (items.length === 1 || (multiView && items.length <= itemsPerView)) {
     return (
       <div className={`relative overflow-hidden rounded-lg ${className}`}>
-        <div className="w-full h-full">{items[0]}</div>
+        {multiView ? (
+          <div className="flex w-full h-full" style={{ gap: `${itemGap}px` }}>
+            {items.map((item, index) => (
+              <div
+                key={index}
+                className="flex-shrink-0"
+                style={{
+                  width: `calc((100% - ${
+                    itemGap * (itemsPerView - 1)
+                  }px) / ${itemsPerView})`,
+                }}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="w-full h-full">{items[0]}</div>
+        )}
       </div>
     );
   }
@@ -276,8 +334,11 @@ export default function Carousel({
           } h-full`}
           style={{
             transform: isTouching
-              ? `translateX(-${currentIndex * 100 + touchOffset}%)`
-              : `translateX(-${currentIndex * 100}%)`,
+              ? `translateX(-${
+                  currentIndex * (100 / itemsPerView) + touchOffset
+                }%)`
+              : `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
+            gap: multiView ? `${itemGap}px` : "0",
           }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
@@ -286,8 +347,19 @@ export default function Carousel({
           {items.map((item, index) => (
             <div
               key={index}
-              className="w-full flex-shrink-0"
-              aria-hidden={index !== currentIndex}
+              className="flex-shrink-0"
+              style={{
+                width: multiView
+                  ? `calc((100% - ${
+                      itemGap * (itemsPerView - 1)
+                    }px) / ${itemsPerView})`
+                  : "100%",
+              }}
+              aria-hidden={
+                multiView
+                  ? index < currentIndex || index >= currentIndex + itemsPerView
+                  : index !== currentIndex
+              }
               role="group"
               aria-roledescription="slide"
               aria-label={`${t.slideLabel} ${index + 1} of ${items.length}`}
@@ -298,22 +370,30 @@ export default function Carousel({
         </div>
 
         {/* Navigation arrows */}
-        {showArrows && items.length > 1 && (
+        {showArrows && items.length > (multiView ? itemsPerView : 1) && (
           <>
             <button
               type="button"
-              className="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 z-10"
+              className={`absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 z-10 ${
+                currentIndex === 0
+                  ? "opacity-50 cursor-not-allowed"
+                  : "opacity-100"
+              }`}
               onClick={goToPrevious}
-              disabled={isTransitioning}
+              disabled={isTransitioning || currentIndex === 0}
               aria-label={t.prevSlide}
             >
               <ChevronLeftIcon />
             </button>
             <button
               type="button"
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 z-10"
+              className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 z-10 ${
+                currentIndex >= maxIndex
+                  ? "opacity-50 cursor-not-allowed"
+                  : "opacity-100"
+              }`}
               onClick={goToNext}
-              disabled={isTransitioning}
+              disabled={isTransitioning || currentIndex >= maxIndex}
               aria-label={t.nextSlide}
             >
               <ChevronRightIcon />
@@ -323,9 +403,9 @@ export default function Carousel({
       </div>
 
       {/* Pagination dots */}
-      {showDots && items.length > 1 && (
+      {showDots && (
         <CarouselDots
-          itemCount={items.length}
+          itemCount={multiView ? maxIndex + 1 : items.length}
           activeIndex={currentIndex}
           onDotClick={goToSlide}
         />

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Carousel from "@/components/Carousel";
 import ImageWithLoader from "@/components/Carousel/ImageWithLoader";
+import MultiItemCarouselExample from "./multi-item-view";
 
 export default function MultiComponentCarouselExample() {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -252,35 +253,50 @@ export default function MultiComponentCarouselExample() {
   ];
 
   return (
-    <div className="bg-gray-100 py-12">
-      <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-4 text-center">
-          Multi-Component Carousel
-        </h1>
-        <p className="text-center text-gray-600 max-w-2xl mx-auto mb-10">
-          This example demonstrates how the carousel can display multiple
-          components within a single slide, creating rich, interactive layouts
-          that combine different content types.
-        </p>
+    <div className="bg-gray-100">
+      <div className="py-12">
+        <div className="container mx-auto px-4">
+          <h1 className="text-3xl font-bold mb-4 text-center">
+            Multi-Component Carousel
+          </h1>
+          <p className="text-center text-gray-600 max-w-2xl mx-auto mb-10">
+            This example demonstrates how the carousel can display multiple
+            components within a single slide, creating rich, interactive layouts
+            that combine different content types.
+          </p>
 
-        <div className="max-w-6xl mx-auto">
-          <Carousel
-            items={multiComponentSlides}
-            showDots={true}
-            onSlideChange={setActiveSlide}
-            className="shadow-xl rounded-xl overflow-hidden"
-            autoPlayInterval={8000}
-          />
+          <div className="max-w-6xl mx-auto mb-16">
+            <Carousel
+              items={multiComponentSlides}
+              showDots={true}
+              onSlideChange={setActiveSlide}
+              className="shadow-xl rounded-xl overflow-hidden"
+              autoPlayInterval={8000}
+            />
 
-          <div className="mt-6 p-4 bg-white rounded-lg shadow-md">
-            <h2 className="text-lg font-medium mb-2">Current Layout</h2>
-            <p className="text-gray-600">
-              Showing slide {activeSlide + 1} of {multiComponentSlides.length}:
-              {activeSlide === 0 && "Image + Text Layout"}
-              {activeSlide === 1 && "Video + Testimonial Layout"}
-              {activeSlide === 2 && "Audio + Article Preview Layout"}
-              {activeSlide === 3 && "Card-based Layout"}
+            <div className="mt-6 p-4 bg-white rounded-lg shadow-md">
+              <h2 className="text-lg font-medium mb-2">Current Layout</h2>
+              <p className="text-gray-600">
+                Showing slide {activeSlide + 1} of {multiComponentSlides.length}
+                :{activeSlide === 0 && "Image + Text Layout"}
+                {activeSlide === 1 && "Video + Testimonial Layout"}
+                {activeSlide === 2 && "Audio + Article Preview Layout"}
+                {activeSlide === 3 && "Card-based Layout"}
+              </p>
+            </div>
+          </div>
+
+          {/* Multi-item carousel example */}
+          <div className="mt-12 pt-8 border-t border-gray-200">
+            <h2 className="text-2xl font-bold mb-4 text-center">
+              Multi-Item Carousel
+            </h2>
+            <p className="text-center text-gray-600 max-w-2xl mx-auto mb-10">
+              This example shows how the carousel can display multiple items per
+              view with configurable settings.
             </p>
+
+            <MultiItemCarouselExample />
           </div>
         </div>
       </div>

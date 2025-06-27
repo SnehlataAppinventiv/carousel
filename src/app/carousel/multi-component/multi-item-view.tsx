@@ -185,7 +185,7 @@ const getColorForIndex = (index: number): string => {
 
 // Add a debounce utility function at the top, just after imports
 // Debounce function to limit the frequency of function calls
-function debounce<T extends (...args: any[]) => any>(
+function debounce<T extends (...args: unknown[]) => void>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -310,14 +310,6 @@ export default function MultiItemCarouselExample() {
   const totalSlides = useMemo(
     () => Math.max(1, cards.length - effectiveItemsPerView + 1),
     [cards.length, effectiveItemsPerView]
-  );
-
-  // Memoize the toggle responsive handler
-  const handleToggleResponsive = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setIsResponsive(e.target.checked);
-    },
-    []
   );
 
   return (

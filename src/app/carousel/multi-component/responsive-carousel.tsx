@@ -23,7 +23,7 @@ const Card = memo(({ index, color }: { index: number; color: string }) => (
 Card.displayName = "Card";
 
 // Debounce function to limit the frequency of function calls
-function debounce<T extends (...args: any[]) => any>(
+function debounce<T extends (...args: unknown[]) => void>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -105,7 +105,6 @@ const BreakpointLegend = memo(() => (
 BreakpointLegend.displayName = "BreakpointLegend";
 
 export default function ResponsiveCarouselExample() {
-  const [activeSlide, setActiveSlide] = useState(0);
   const [windowSize, setWindowSize] = useState({
     width: typeof window !== "undefined" ? window.innerWidth : 0,
     deviceType: "",
@@ -192,11 +191,6 @@ export default function ResponsiveCarouselExample() {
     [colors]
   );
 
-  // Memoized slide change handler
-  const handleSlideChange = useCallback((index: number) => {
-    setActiveSlide(index);
-  }, []);
-
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-6">Responsive Carousel</h2>
@@ -210,7 +204,6 @@ export default function ResponsiveCarouselExample() {
       <div className="h-72 mb-6">
         <Carousel
           items={cards}
-          onSlideChange={handleSlideChange}
           multiView={true}
           itemGap={16}
           className="h-full"

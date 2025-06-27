@@ -7,7 +7,6 @@ import React, {
   useCallback,
   memo,
   useMemo,
-  useDeferredValue,
 } from "react";
 import ChevronLeftIcon from "./ChevronLeftIcon";
 import ChevronRightIcon from "./ChevronRightIcon";
@@ -133,9 +132,6 @@ export default function Carousel({
   });
   const { currentIndex, isTransitioning } = carouselState;
 
-  // Use deferred value for smoother transitions during resize events
-  const deferredCurrentIndex = useDeferredValue(currentIndex);
-
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
   const initialRenderRef = useRef(true);
   const slidesContainerRef = useRef<HTMLDivElement>(null);
@@ -163,9 +159,12 @@ export default function Carousel({
     if (typeof window === "undefined") return;
 
     // Debounce function to limit the frequency of resize events
-    function debounce(fn: Function, ms: number) {
+    function debounce<T extends (...args: unknown[]) => void>(
+      fn: T,
+      ms: number
+    ) {
       let timer: NodeJS.Timeout | null = null;
-      return (...args: any[]) => {
+      return (...args: Parameters<T>) => {
         if (timer) clearTimeout(timer);
         timer = setTimeout(() => {
           timer = null;

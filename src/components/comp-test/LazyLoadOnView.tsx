@@ -4,11 +4,13 @@ import { useEffect, useRef, useState } from "react";
 
 // Define components that will be loaded on demand
 type DynamicComponentType = {
-  comp1: React.ComponentType<{}>;
-  comp2: React.ComponentType<{}>;
-  comp3: React.ComponentType<{}>;
+  comp1: React.ComponentType<object>;
+  comp2: React.ComponentType<object>;
+  comp3: React.ComponentType<object>;
   comp4: React.ComponentType<{ text: string }>;
 };
+
+type DynamicComponent = DynamicComponentType[keyof DynamicComponentType];
 
 type Props = {
   component: keyof DynamicComponentType;
@@ -23,9 +25,7 @@ export default function LazyLoadOnView({
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
-  const [Component, setComponent] = useState<React.ComponentType<any> | null>(
-    null
-  );
+  const [Component, setComponent] = useState<DynamicComponent | null>(null);
 
   // Set up intersection observer to detect when component enters viewport
   useEffect(() => {
@@ -73,7 +73,7 @@ export default function LazyLoadOnView({
             return;
         }
 
-        setComponent(() => loadedComponent);
+        setComponent(loadedComponent as DynamicComponent);
       } catch (error) {
         console.error(`Error loading component ${component}:`, error);
       }
@@ -94,7 +94,7 @@ export default function LazyLoadOnView({
       ) : component === "comp4" ? (
         <Component text={text || "Default text"} />
       ) : (
-        <Component />
+        <Component text={text || "Default text"} />
       )}
     </div>
   );
